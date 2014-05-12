@@ -11,3 +11,9 @@ The chat client will be a Java frontend to the socket APIs. It will manage a
 GUI that takes messages from a user, breaks them into packets, and transmits
 them to the server. Upon receiving a message from the server the message will
 be displayed to the user. Java was chosen for its cross-platform GUI elements.
+
+REQUIREMENTS:
+Client
+	The Java client requires javax, swing, and some networking libraries that probably all come with the JDK.
+Server
+	The Haskell server requires System.IO, which should come with ghc, and Network.Socket, which may not.
