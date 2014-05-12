@@ -3,23 +3,23 @@
 	handles usernames, but doesn't have channels or many other features.
 -}
 
-import System.IO
-import Network.Socket
+import System.IO			-- For handles
+import Network.Socket		-- For sockets
+import Control.Concurrent	-- For threads
 
--- Port for the server to bind to
+-- Global vars for configuration
 listen_port = 8888
 max_connections = 30
 
+-- We'll define messages as (Username, Text)
+type Msg = (String, String)
+
 main :: IO ()
 main = do
-	-- Make new socket
-	sock <- socket AF_INET Stream 0
-	-- Set it up as a reusable listening socket
-	setSocketOption sock ReuseAddr 1
-	-- And bind it to all devices on our port
-	bindSocket sock (SockAddrInet listen_port iNADDR_ANY)
-	-- Set the maximum number of connections 
-	listen sock max_connections
+	sock <- socket AF_INET Stream 0		-- Make new socket
+	setSocketOption sock ReuseAddr 1	-- Make it a reusable listening socket
+	bindSocket sock (SockAddrInet listen_port iNADDR_ANY) -- Bind to dev / port
+	listen sock max_connections 		-- Set max connections
 	listenLoop sock
 
 -- This may cause a stack overflow given enough time, I need to look into
@@ -27,12 +27,14 @@ main = do
 listenLoop :: Socket -> IO ()
 listenLoop servSock = do
 	client <- accept servSock
-	handle client -- Need to make this multithreaded later
+	forkIO (handle client) -- Run 'handle' on a background thread
 	listenLoop servSock
 
 -- 'accept' returns a tuple of a socket and the address it's connected on
 -- We're only interested in the socket right now
 handle :: (Socket, SockAddr) -> IO ()
 handle (sock, _) = do
-	send sock "Testing\n"
-	sClose sock -- Close connection	
+	s <- socketToHandle sock ReadWriteMode -- convert the socket to a handle
+	hSetBuffering s NoBuffering -- Write byte by byte over the network
+	hPutStrLn s "Testing"
+	hClose s -- This closes the handle _and_ the socket
