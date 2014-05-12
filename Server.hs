@@ -7,8 +7,8 @@ import System.IO
 import Network.Socket
 
 -- Port for the server to bind to
-LISTEN_PORT = 8888
-MAX_CONNECTIONS = 30
+listen_port = 8888
+max_connections = 30
 
 main :: IO ()
 main = do
@@ -17,9 +17,9 @@ main = do
 	-- Set it up as a reusable listening socket
 	setSocketOption sock ReuseAddr 1
 	-- And bind it to all devices on our port
-	bindSocket sock (SockAddrInet LISTEN_PORT iNADDR_ANY)
+	bindSocket sock (SockAddrInet listen_port iNADDR_ANY)
 	-- Set the maximum number of connections 
-	listen sock MAX_CONNECTIONS
+	listen sock max_connections
 	listenLoop sock
 
 -- This may cause a stack overflow given enough time, I need to look into
