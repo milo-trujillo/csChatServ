@@ -27,7 +27,7 @@ main = do
 listenLoop :: Socket -> IO ()
 listenLoop servSock = do
 	client <- accept servSock
-	handle client
+	handle client -- Need to make this multithreaded later
 	listenLoop servSock
 
 -- 'accept' returns a tuple of a socket and the address it's connected on
