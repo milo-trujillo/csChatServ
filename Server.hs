@@ -40,4 +40,13 @@ handle (sock, _) = do
 	hPutStr s "Your name: "
 	name <- hGetLine s
 	hPutStrLn s ("Hello " ++ name)
+	hPutStrLn s "We're echoing you now."
+	echo s
 	hClose s -- This closes the handle _and_ the socket
+
+echo :: Handle -> IO ()
+echo sock = do
+	msg <- hGetLine sock
+	hPutStrLn sock msg
+	echo sock
+	
