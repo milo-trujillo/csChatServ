@@ -53,18 +53,9 @@ public class Client extends JFrame implements ActionListener
 		outs.println(text);				// Send text across the network
 	}
 
-	public static void main( String [] args ) throws IOException
+	// This is called to connect to a server and read from the socket
+	private static void connectToServer( InetAddress host, int port )
 	{
-		// For now we'll hardcode in the address and port number
-		// but eventually we'll want to get them from the user
-		String hostname = "localhost";
-		InetAddress host = InetAddress.getByName(hostname);
-		int port = 8888;
-
-		// Set up the GUI
-		JFrame frame = new Client(hostname + ":" + port + "\n");
-		frame.setVisible(true);
-
 		try
 		{
 			// Open the socket and set up some handles for it
@@ -102,7 +93,24 @@ public class Client extends JFrame implements ActionListener
 		}
 		catch( IOException e )
 		{
-			System.out.println("Something went wrong: " + e.getMessage());
+			System.out.println("Something went wrong in setup: " + 
+				e.getMessage());
 		}
+
+	}
+
+	public static void main( String [] args ) throws IOException
+	{
+		// For now we'll hardcode in the address and port number
+		// but eventually we'll want to get them from the user
+		String hostname = "localhost";
+		InetAddress host = InetAddress.getByName(hostname);
+		int port = 8888;
+
+		// Set up the GUI
+		JFrame frame = new Client(hostname + ":" + port + "\n");
+		frame.setVisible(true);
+
+		connectToServer(host, port);
 	}
 }
