@@ -36,5 +36,8 @@ handle :: (Socket, SockAddr) -> IO ()
 handle (sock, _) = do
 	s <- socketToHandle sock ReadWriteMode -- convert the socket to a handle
 	hSetBuffering s NoBuffering -- Write byte by byte over the network
-	hPutStrLn s "Testing"
+	-- Now let's test IO
+	hPutStr s "Your name: "
+	name <- hGetLine s
+	hPutStrLn s ("Hello " ++ name)
 	hClose s -- This closes the handle _and_ the socket
