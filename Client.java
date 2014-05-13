@@ -11,26 +11,87 @@ import java.util.*;
 // For GUI
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 
-public class Client
+public class Client extends JFrame implements ActionListener
 {
+	private static boolean initialized = false;
+	private static JTextArea display;
+	private static JTextField input;
+	private static PrintWriter outs;
+
+	public Client(String host)
+	{
+		setTitle("Chat Client");
+		setSize(300, 220);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		display = new JTextArea("Connecting to host: " + host);
+		JScrollPane scroll = new JScrollPane(display);
+		input = new JTextField();
+		input.addActionListener(this);
+
+		display.setEditable(false);
+
+		this.setLayout(new BorderLayout());
+		this.add(scroll, BorderLayout.CENTER); // Center makes it use all space
+		this.add(input, BorderLayout.SOUTH);
+	}
+
+	// This is called whenever the user presses return in the input box
+	public void actionPerformed(ActionEvent event)
+	{
+		Object source = event.getSource();
+		if( source != input || initialized == false )
+			return;
+		String text = input.getText(); 	// Get the text user has entered
+		input.setText(new String("")); 	// Clear text box
+		outs.println(text);				// Send text across the network
+	}
+
 	public static void main( String [] args ) throws IOException
 	{
 		// For now we'll hardcode in the address and port number
 		// but eventually we'll want to get them from the user
-		InetAddress host = InetAddress.getByName("localhost");
+		String hostname = "localhost";
+		InetAddress host = InetAddress.getByName(hostname);
 		int port = 8888;
+		JFrame frame = new Client(hostname + ":" + port + "\n");
+		frame.setVisible(true);
+
+		initialized = true;
+
 		try
 		{
+			// Open the socket and set up some handles for it
 			Socket sock = new Socket(host, port);
 			InputStream in = sock.getInputStream();
-			// The server writes a byte at a time, so we'll read byte by byte
-			byte[] buffer = new byte[1024];
-			int length;
-			while( (length = in.read(buffer)) != -1 ) // -1 == EOF
+			OutputStream out = sock.getOutputStream();
+			InputStreamReader ins = new InputStreamReader(in);
+			outs = new PrintWriter(out, true);
+
+			// Read from socket and print to GUI, until socket closes
+			while(true)
 			{
-				System.out.write(buffer, 0, length);
+				try
+				{
+					int recv = ins.read();
+					if( recv == -1 ) // If EOF
+						break;
+					String line = Character.toString((char)recv);
+					display.append(line);
+				}
+				catch(IOException e)
+				{
+					System.out.println("Error reading from socket: " + 
+						e.getMessage());
+				}
 			}
+
+			// Now clean up
+			display.append("--- Server Closed Connection ---\n");
+			initialized = false;
+			sock.close();
 		}
 		catch( IOException e )
 		{
