@@ -13,4 +13,4 @@ all:
 	$(JAVAC) Client.java
 
 clean:
-	rm *.o *.hi Server Client
+	rm *.o *.hi *.class Server Client
