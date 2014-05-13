@@ -15,11 +15,15 @@ import java.awt.event.*;
 
 public class Client extends JFrame implements ActionListener
 {
-	private static boolean initialized = false;
+	// IO elements that need to be accessed in several methods
 	private static JTextArea display;
 	private static JTextField input;
 	private static PrintWriter outs;
 
+	// This is true when we're ready to read / write data to the network
+	private static boolean initialized = false;
+
+	// Sets up the GUI elements, called once during setup
 	public Client(String host)
 	{
 		setTitle("Chat Client");
@@ -56,10 +60,10 @@ public class Client extends JFrame implements ActionListener
 		String hostname = "localhost";
 		InetAddress host = InetAddress.getByName(hostname);
 		int port = 8888;
+
+		// Set up the GUI
 		JFrame frame = new Client(hostname + ":" + port + "\n");
 		frame.setVisible(true);
-
-		initialized = true;
 
 		try
 		{
@@ -69,6 +73,9 @@ public class Client extends JFrame implements ActionListener
 			OutputStream out = sock.getOutputStream();
 			InputStreamReader ins = new InputStreamReader(in);
 			outs = new PrintWriter(out, true);
+
+			// Now ready to read and write data
+			initialized = true;
 
 			// Read from socket and print to GUI, until socket closes
 			while(true)
