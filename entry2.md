@@ -3,11 +3,11 @@ Journal Entry 2
 
 ### Overall
 
-I/O works on both ends! The server acts as an echo server now, I haven't tackled IPC yet. The client is basically done, other than a GUI for choosing server and port. Now the easy work is out of the way.
+I/O works on both ends! The server acts as an echo server now, I haven't tackled IPC yet. The client is basically done, other than a GUI for choosing the server and port. Now the easy work is out of the way.
 
 ### Server
 
-The Server can now read input from the user a line at a time, and echo it back to the user again. I'm using infinite recursion in a few places, but as it turns out that's alright in Haskell. As I understand it because there's no mutable state Haskell doesn't have the same concept of a "stack" from other languages, so there's no threat of a stack overflow or similar performance overhead associated with recursion in other languages. I haven't tackled getting multiple threads to talk to one another, I'm a little afraid of what IPC will look like in this language.
+The Server can now read input from the user a line at a time, and echo it back to the user again. I'm using infinite recursion in a few places, but as it turns out that's alright in Haskell. As I understand it, because there's no mutable state, Haskell doesn't have the same concept of a "stack" from other languages, so there's no threat of a stack overflow or similar performance overhead associated with recursion you'd have in imperative languages. I haven't tackled getting multiple threads to talk to one another, I'm a little afraid of what IPC will look like in this language.
 
 ### Client
 
