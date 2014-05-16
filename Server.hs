@@ -28,6 +28,7 @@ main = do
 		setSocketOption sock ReuseAddr 1	-- Set reusable listening socket
 		bindSocket sock (SockAddrInet listen_port iNADDR_ANY) -- Bind any dev
 		listen sock max_connections 		-- Set max connections
+		forkIO (clearChannel msgs)			-- Prevent memory leak in msgs
 		listenLoop sock msgs
 	else
 		putStrLn "Usage: Server <port number>"
@@ -47,7 +48,7 @@ handle (sock, _) msgs = do
 	hSetBuffering s NoBuffering -- Write byte by byte over the network
 	hPutStr s "Your name: "
 	name <- hGetLine s
-	hPutStrLn s ("Hello " ++ name)
+	hPutStrLn s ("Hello, " ++ name)
 	hPutStrLn s "Welcome to the Server."
 	write <- dupChan msgs
 	read <- dupChan msgs
@@ -68,6 +69,13 @@ readMsgs sock msgs = do
 	(user, msg) <- readChan msgs
 	hPutStrLn sock ("<" ++ user ++ "> " ++ msg)
 	readMsgs sock msgs
+
+-- This function constantly empties a channel, and never return.
+-- This prevents a memory leak from the original channel never getting emptied.
+clearChannel :: Chan Msg -> IO ()
+clearChannel chan = do
+	(_,_) <- readChan chan
+	clearChannel chan
 
 -- Checks if a string contains only an integer
 isInteger s = case reads s :: [(Integer, String)] of
