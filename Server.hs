@@ -10,7 +10,6 @@ import Control.Concurrent	-- For threads and channels
 
 -- Global vars for configuration
 max_connections = 30
-listen_port = 8888
 
 -- We'll define messages as (Username, Text)
 type Msg = (String, String)
@@ -22,11 +21,12 @@ main = do
 	if length args == 1 && isInteger (args !! 0)
 	then
 		do
-		-- listen_port <- read (args !! 0) :: Int -- This bit isn't working yet
+		let portno = (read (head args) :: Integer)
 		msgs <- newChan						-- Stores all messages
 		sock <- socket AF_INET Stream 0		-- Make new socket
 		setSocketOption sock ReuseAddr 1	-- Set reusable listening socket
-		bindSocket sock (SockAddrInet listen_port iNADDR_ANY) -- Bind any dev
+		-- Bind the socket to the listen port on every interface
+		bindSocket sock (SockAddrInet (fromIntegral portno) iNADDR_ANY)
 		listen sock max_connections 		-- Set max connections
 		forkIO (clearChannel msgs)			-- Prevent memory leak in msgs
 		listenLoop sock msgs
@@ -36,7 +36,7 @@ main = do
 -- Listens for a new client, then forks off a handler
 listenLoop :: Socket -> Chan Msg -> IO ()
 listenLoop servSock msgs = do
-	client <- accept servSock
+	client <- Network.Socket.accept servSock
 	forkIO (handle client msgs) -- Run 'handle' on a background thread
 	listenLoop servSock msgs
 
