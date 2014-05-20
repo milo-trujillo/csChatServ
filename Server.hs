@@ -21,7 +21,7 @@ main = do
 	if length args == 1 && isInteger (args !! 0)
 	then
 		do
-		let portno = (read (head args) :: Integer)
+		let portno = (read (head args) :: Integer) -- Convert first arg to Int
 		msgs <- newChan						-- Stores all messages
 		sock <- socket AF_INET Stream 0		-- Make new socket
 		setSocketOption sock ReuseAddr 1	-- Set reusable listening socket
@@ -70,11 +70,11 @@ readMsgs sock msgs = do
 	hPutStrLn sock ("<" ++ user ++ "> " ++ msg)
 	readMsgs sock msgs
 
--- This function constantly empties a channel, and never return.
+-- This function constantly empties a channel, and never returns.
 -- This prevents a memory leak from the original channel never getting emptied.
 clearChannel :: Chan Msg -> IO ()
 clearChannel chan = do
-	(_,_) <- readChan chan
+	(_, _) <- readChan chan
 	clearChannel chan
 
 -- Checks if a string contains only an integer
