@@ -1,6 +1,7 @@
 /**
  *		Client is a chat client for the accompanying server.
- *		It's mostly just a GUI frontend to some sockets.
+ *		It gets the hostname and port to connect to from the user, and then acts
+ *		as a GUI frontend to some sockets.
  */
 
 // For networking
@@ -19,6 +20,9 @@ public class Client extends JFrame implements ActionListener
 	private static JTextArea display;
 	private static JTextField input;
 	private static PrintWriter outs;
+
+	// This is the window where the user enters port number and hostname
+	private static ClientSetup setup;
 
 	// This is true when we're ready to read / write data to the network
 	private static boolean initialized = false;
@@ -46,7 +50,7 @@ public class Client extends JFrame implements ActionListener
 	public void actionPerformed(ActionEvent event)
 	{
 		Object source = event.getSource();
-		if( source != input || initialized == false )
+		if( !source.equals(input) || initialized == false )
 			return;
 		String text = input.getText(); 	// Get the text user has entered
 		input.setText(new String("")); 	// Clear text box
@@ -96,21 +100,51 @@ public class Client extends JFrame implements ActionListener
 			System.out.println("Something went wrong in setup: " + 
 				e.getMessage());
 		}
-
 	}
 
 	public static void main( String [] args ) throws IOException
 	{
-		// For now we'll hardcode in the address and port number
-		// but eventually we'll want to get them from the user
-		String hostname = "localhost";
-		InetAddress host = InetAddress.getByName(hostname);
-		int port = 8888;
+		// Default values, we will not create 
+		InetAddress host = null;
+		int port = 0;
 
-		// Set up the GUI
-		JFrame frame = new Client(hostname + ":" + port + "\n");
-		frame.setVisible(true);
+		// Set up UI for getting the host / port number
+		ClientSetup setup = new ClientSetup();
+		setup.setVisible(true);
 
-		connectToServer(host, port);
+		// Get valid input from user
+		boolean validHost = false;
+		while( !validHost )
+		{
+			String [] address = setup.getAddress();
+			try
+			{
+				host = InetAddress.getByName(address[0]);
+				port = Integer.parseInt(address[1]);
+				if( port != 0 )
+				{
+					validHost = true;
+					setup.dispose();	
+				}
+			}
+			catch(Exception e) // Something went wrong, their input is botched
+			{
+				JOptionPane.showMessageDialog(null,
+					"Please provide a valid hostname and port", 
+					"Invalid Input",
+					JOptionPane.ERROR_MESSAGE);
+				validHost = false;
+			}
+		}
+
+		// This should always be true, but Java wants to be sure the vars
+		// are initialized
+		if( host != null && port != 0 )
+		{
+			// Set up the chat GUI
+			JFrame frame = new Client(host.getHostName() + ":" + port + "\n");
+			frame.setVisible(true);
+			connectToServer(host, port);
+		}
 	}
 }
