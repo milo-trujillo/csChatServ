@@ -23,7 +23,7 @@ public class ClientSetup extends JFrame implements ActionListener
 	{
 		// Main window
 		setTitle("Choose Server");
-		setSize(150, 95);
+		setSize(150, 140);
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
