@@ -85,7 +85,7 @@ public class Client extends JFrame implements ActionListener
 				}
 				catch(IOException e)
 				{
-					System.out.println("Error reading from socket: " + 
+					display.append("Error reading from socket: " + 
 						e.getMessage());
 				}
 			}
@@ -97,7 +97,7 @@ public class Client extends JFrame implements ActionListener
 		}
 		catch( IOException e )
 		{
-			System.out.println("Something went wrong in setup: " + 
+			display.append("Something went wrong in setup: " + 
 				e.getMessage());
 		}
 	}
