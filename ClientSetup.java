@@ -51,9 +51,9 @@ public class ClientSetup extends JFrame implements ActionListener
 
 		// Vomit it all onto the main window
 		this.setLayout(new FlowLayout());
-		this.add(hostPanel); //, BorderLayout.NORTH);
-		this.add(portPanel); //, BorderLayout.CENTER);
-		this.add(connect); //, BorderLayout.SOUTH);
+		this.add(hostPanel);
+		this.add(portPanel);
+		this.add(connect);
 	}
 
 	// When Connect or Return is pressed we check if there's text in both
