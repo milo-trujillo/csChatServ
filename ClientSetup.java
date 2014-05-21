@@ -59,8 +59,6 @@ public class ClientSetup extends JFrame implements ActionListener
 	public void actionPerformed(ActionEvent event)
 	{
 		Object source = event.getSource();
-		if( source != connect )
-			return;
 		if( hostInput.getText().length() > 0 ||
 			portInput.getText().length() > 0 )
 			ready = true;
@@ -69,7 +67,12 @@ public class ClientSetup extends JFrame implements ActionListener
 	// This effectively returns a tuple of (hostname, port), but using arrays
 	public String [] getAddress()
 	{
-		while( !ready ); // Wait on the ready variable
+		// Wait on the ready variable
+		while( !ready )
+		{
+			// Write once, run everywhere my ass.
+			System.out.print(""); // On OSX the loop never exited without this
+		}
 		ready = false; // Reset the status
 		return new String [] {hostInput.getText(), portInput.getText()};
 	}
