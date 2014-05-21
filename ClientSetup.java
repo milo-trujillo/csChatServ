@@ -31,6 +31,7 @@ public class ClientSetup extends JFrame implements ActionListener
 		JPanel hostPanel = new JPanel();
 		JLabel hostTitle = new JLabel("Enter hostname:");
 		hostInput = new JTextField();
+		hostInput.addActionListener(this);
 		hostPanel.setLayout(new BorderLayout());
 		hostPanel.add(hostTitle, BorderLayout.NORTH);
 		hostPanel.add(hostInput, BorderLayout.CENTER);
@@ -39,6 +40,7 @@ public class ClientSetup extends JFrame implements ActionListener
 		JPanel portPanel = new JPanel();
 		JLabel portTitle = new JLabel("Enter port:");
 		portInput = new JTextField();
+		portInput.addActionListener(this);
 		portPanel.setLayout(new BorderLayout());
 		portPanel.add(portTitle, BorderLayout.NORTH);
 		portPanel.add(portInput, BorderLayout.CENTER);
@@ -48,17 +50,16 @@ public class ClientSetup extends JFrame implements ActionListener
 		connect.addActionListener(this);
 
 		// Vomit it all onto the main window
-		this.setLayout(new BorderLayout());
-		this.add(hostPanel, BorderLayout.NORTH);
-		this.add(portPanel, BorderLayout.CENTER);
-		this.add(connect, BorderLayout.SOUTH);
+		this.setLayout(new FlowLayout());
+		this.add(hostPanel); //, BorderLayout.NORTH);
+		this.add(portPanel); //, BorderLayout.CENTER);
+		this.add(connect); //, BorderLayout.SOUTH);
 	}
 
-	// When the 'Connect' button is pressed we check if there's text in both
+	// When Connect or Return is pressed we check if there's text in both
 	// boxes, and if there is we set 'ready' to True
 	public void actionPerformed(ActionEvent event)
 	{
-		Object source = event.getSource();
 		if( hostInput.getText().length() > 0 ||
 			portInput.getText().length() > 0 )
 			ready = true;
@@ -69,10 +70,8 @@ public class ClientSetup extends JFrame implements ActionListener
 	{
 		// Wait on the ready variable
 		while( !ready )
-		{
-			// Write once, run everywhere my ass.
 			System.out.print(""); // On OSX the loop never exited without this
-		}
+			// Write once, run everywhere my ass.
 		ready = false; // Reset the status
 		return new String [] {hostInput.getText(), portInput.getText()};
 	}
