@@ -35,6 +35,7 @@ public class Client extends JFrame implements ActionListener
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		display = new JTextArea("Connecting to host: " + host);
+		display.setLineWrap(true);
 		JScrollPane scroll = new JScrollPane(display);
 		input = new JTextField();
 		input.addActionListener(this);
@@ -82,11 +83,17 @@ public class Client extends JFrame implements ActionListener
 						break;
 					String line = Character.toString((char)recv);
 					display.append(line);
+					display.selectAll();
+					int x = display.getSelectionEnd();
+					display.select(x,x);
 				}
 				catch(IOException e)
 				{
 					display.append("Error reading from socket: " + 
 						e.getMessage());
+					display.selectAll();
+					int x = display.getSelectionEnd();
+					display.select(x,x);
 				}
 			}
 
