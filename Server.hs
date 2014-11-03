@@ -50,16 +50,16 @@ handleClient (sock, _) msgs = do
 	hSetBuffering s NoBuffering -- Write byte by byte over the network
 	hPutStr s "Your name: "
 	name <- hGetLine s
+	hPutStrLn s "" -- Print a newline, since the previous hPutStr didn't
 	if (name == announce_name) then do
 		hPutStrLn s "Sorry, that's a forbidden name"
 		hClose s
 	else do
 		hPutStrLn s ("Hello, " ++ name)
 		writeChan msgs (announce_name, name ++ " has entered the server")
-		write <- dupChan msgs
-		read <- dupChan msgs
-		forkIO (readUser name s write)
-		readMsgs s read -- Do _not_ fork this line! We don't want hClose to run!
+		indiv <- dupChan msgs -- Copy the channel for this individial user
+		forkIO (readUser name s indiv)
+		readMsgs s indiv -- Do _not_ fork, we don't want hClose to run early!
 		hClose s -- This closes the handle _and_ the socket
 
 -- This reads from the user and appends new messages to the global queue
