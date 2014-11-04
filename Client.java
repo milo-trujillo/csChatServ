@@ -94,6 +94,7 @@ public class Client extends JFrame implements ActionListener
 					display.selectAll();
 					int x = display.getSelectionEnd();
 					display.select(x,x);
+					break; // If a socket is suddenly terminated we need to end
 				}
 			}
 
