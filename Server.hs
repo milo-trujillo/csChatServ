@@ -70,9 +70,17 @@ readUser user sock msgs = do
 		hClose sock
 		writeChan msgs (announce_name, user ++ " has left the server")
 	else do
-		msg <- hGetLine sock
-		writeChan msgs (user, msg)
-		readUser user sock msgs
+		catch(getInput)
+			(\(SomeException _) ->do
+				hClose sock
+				writeChan msgs (announce_name, user ++ " has left the server")
+				return ()
+			)
+		where
+			getInput = do
+				msg <- hGetLine sock
+				writeChan msgs (user, msg)
+				readUser user sock msgs
 
 -- This reads from the message queue and prints results over socket to user
 readMsgs :: Handle -> Chan Msg -> IO ()
