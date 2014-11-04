@@ -31,7 +31,7 @@ public class Client extends JFrame implements ActionListener
 	public Client(String host)
 	{
 		setTitle("Chat Client");
-		setSize(300, 220);
+		setSize(320, 220);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
 		display = new JTextArea("Connecting to host: " + host);
@@ -90,7 +90,7 @@ public class Client extends JFrame implements ActionListener
 				catch(IOException e)
 				{
 					display.append("Error reading from socket: " + 
-						e.getMessage());
+						e.getMessage() + "\n");
 					display.selectAll();
 					int x = display.getSelectionEnd();
 					display.select(x,x);
